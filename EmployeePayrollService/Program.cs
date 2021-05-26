@@ -22,9 +22,9 @@ namespace EmployeePayrollService
             employee.Deductions = 1500;
             employee.StartDate = Convert.ToDateTime("2020-11-03");
 
-            //if (repo.AddEmployee(employee))
-            //    Console.WriteLine("Records added successfully");
-            repo.GetAllEmployee();
+            if (repo.AddEmployee(employee))
+                Console.WriteLine("Records added successfully");
+            //repo.GetAllEmployee();
             Console.ReadKey();
         }
     }

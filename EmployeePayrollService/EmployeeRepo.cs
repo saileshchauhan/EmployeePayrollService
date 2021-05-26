@@ -102,7 +102,7 @@ namespace EmployeePayrollService
             {
                 using (connection)
                 {
-                    string query = "UPDATE employee_payroll1 SET salary=300000 WHERE name='terissa'";
+                    string query = "UPDATE employee_payroll1 SET salary=3000000 WHERE name='terissa'";
                     SqlCommand command = new SqlCommand(query,connection);
                     connection.Open();
                     var result = command.ExecuteNonQuery();

@@ -10,12 +10,12 @@ namespace EmployeePayrollService
     public class EmployeeRepo
     {
         public static string connectionString = @"Data Source=(localdb)\ProjectsV13;Initial Catalog=PayRoll_Service13;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        SqlConnection connection = new SqlConnection(connectionString);
+        readonly SqlConnection connection = new SqlConnection(connectionString);
+        readonly EmployeeModel employeeModel = new EmployeeModel();
         public void GetAllEmployee()
         {
             try
             {
-                EmployeeModel employeeModel = new EmployeeModel();
                 using (this.connection)
                 {
                     string query = @"Select * from employee_payroll1;";
@@ -27,7 +27,6 @@ namespace EmployeePayrollService
                         while (dr.Read())
                         {
                             employeeModel.EmployeeID = dr.GetInt32(0);
-
                             employeeModel.EmployeeName = dr.GetString(1);
                             employeeModel.Salary = dr.GetDecimal(2);
                             employeeModel.BasicPay = dr.GetDecimal(7);
@@ -37,8 +36,8 @@ namespace EmployeePayrollService
                             employeeModel.Department = dr.GetString(6);
                             employeeModel.Deductions = dr.GetDecimal(8);
                             employeeModel.NetPay = dr.GetDecimal(9);
-                            System.Console.WriteLine(employeeModel.EmployeeName + " " + employeeModel.Salary + " " + employeeModel.StartDate + " " + employeeModel.Gender + " " + employeeModel.Address + " " + employeeModel.Department + " "+employeeModel.BasicPay+" " + employeeModel.Deductions + " " + employeeModel.NetPay);
-                            System.Console.WriteLine("\n");
+                            Console.WriteLine(employeeModel.EmployeeName + " " + employeeModel.Salary + " " + employeeModel.StartDate + " " + employeeModel.Gender + " " + employeeModel.Address + " " + employeeModel.Department + " "+employeeModel.BasicPay+" " + employeeModel.Deductions + " " + employeeModel.NetPay);
+                            Console.WriteLine("\n");
                         }
                     }
                     else
@@ -111,6 +110,37 @@ namespace EmployeePayrollService
                 }
             }
             catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+        public void Retreive_EmployeInDateRange()
+        {
+            try
+            {
+                using (connection)
+                {
+                    string query = "SELECT * from employee_payroll1 where start between '2019-01-01' and GETDATE()";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            employeeModel.EmployeeName = reader.GetString(1);
+                            employeeModel.StartDate = reader.GetDateTime(3);
+                            Console.WriteLine("Employe Name "+ employeeModel.EmployeeName+" Start Date "+ employeeModel.StartDate);
+                            Console.WriteLine("\n");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data Found");
+                    }
+                }
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }

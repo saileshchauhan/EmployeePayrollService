@@ -96,7 +96,25 @@ namespace EmployeePayrollService
             }
             return false;
         }
-
+        public void Update_Terrisa()
+        {
+            try 
+            {
+                using (connection)
+                {
+                    string query = "UPDATE employee_payroll1 SET salary=300000 WHERE name='terissa'";
+                    SqlCommand command = new SqlCommand(query,connection);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    if(result!=0)
+                        Console.WriteLine("Records of Terrisa Updated");
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
     }
 
 }

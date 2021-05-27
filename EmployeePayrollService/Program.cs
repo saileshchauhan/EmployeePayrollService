@@ -22,7 +22,8 @@ namespace EmployeePayrollService
             employee.Deductions = 1500;
             employee.StartDate = Convert.ToDateTime("2020-11-03");
             repo.Retreive_EmployeInDateRange();
-            //repo.Update_Terrisa();
+            repo.Find_SumAverageMinMax();
+            repo.Update_Terrisa();
             //if (repo.AddEmployee(employee))
             //    Console.WriteLine("Records added successfully");
             //repo.GetAllEmployee();

@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeePayrollService
 {
     public class EmployeeRepo
     {
         public static string connectionString = @"Data Source=(localdb)\ProjectsV13;Initial Catalog=PayRoll_Service13;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        readonly SqlConnection connection = new SqlConnection(connectionString);
-        readonly EmployeeModel employeeModel = new EmployeeModel();
+        EmployeeModel employeeModel = new EmployeeModel();
         public void GetAllEmployee()
         {
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
-                using (this.connection)
+                using (connection)
                 {
                     string query = @"Select * from employee_payroll1;";
-                    SqlCommand cmd = new SqlCommand(query, this.connection);
-                    this.connection.Open();
+                    SqlCommand cmd = new SqlCommand(query,connection);
+                    connection.Open();
                     SqlDataReader dr = cmd.ExecuteReader();
                     if (dr.HasRows)
                     {
@@ -54,12 +50,13 @@ namespace EmployeePayrollService
 
         public bool AddEmployee(EmployeeModel model)
         {
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
-                using (this.connection)
+                using (connection)
                 {
                     //var qury=values()
-                    SqlCommand command = new SqlCommand("SpAddEmployeeDetails", this.connection);
+                    SqlCommand command = new SqlCommand("SpAddEmployeeDetails", connection);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@EmployeeName", model.EmployeeName);
                     command.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
@@ -74,9 +71,9 @@ namespace EmployeePayrollService
                     command.Parameters.AddWithValue("@StartDate", DateTime.Now);
                     //command.Parameters.AddWithValue("@City", model.City);
                     //command.Parameters.AddWithValue("@Country", model.Country);
-                    this.connection.Open();
+                    connection.Open();
                     var result = command.ExecuteNonQuery();
-                    this.connection.Close();
+                    connection.Close();
                     if (result != 0)
                     {
 
@@ -91,12 +88,13 @@ namespace EmployeePayrollService
             }
             finally
             {
-                this.connection.Close();
+                connection.Close();
             }
             return false;
         }
         public void Update_Terrisa()
         {
+            SqlConnection connection = new SqlConnection(connectionString);
             try 
             {
                 using (connection)
@@ -116,6 +114,7 @@ namespace EmployeePayrollService
         }
         public void Retreive_EmployeInDateRange()
         {
+            SqlConnection connection = new SqlConnection(connectionString);
             try
             {
                 using (connection)
@@ -141,6 +140,42 @@ namespace EmployeePayrollService
                 }
             }
             catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+        public void Find_SumAverageMinMax()
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                using (connection)
+                {
+                    string querySum = "Select SUM(salary),gender from employee_payroll1 group by gender";
+                    string queryAverage = "Select AVG(salary),gender from employee_payroll1 group by gender";
+                    string queryMInimumSalary = "Select MIN(salary),gender from employee_payroll1 group by gender";
+                    string queryMaximumSalary = "Select MAX(salary),gender from employee_payroll1 group by gender";
+
+                    SqlCommand command = new SqlCommand(querySum, connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    //SqlDataReader read = command.ExecuteScalar();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            decimal Sum = reader.GetDecimal(0);
+                            employeeModel.Gender = Convert.ToChar(reader.GetString(1));
+                            Console.WriteLine("Sum of Salary "+Sum+" Gender "+employeeModel.Gender);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data to read");
+                    }
+                }
+            }
+            catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
